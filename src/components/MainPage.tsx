@@ -1,22 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { FaRegMoneyBill1 } from 'react-icons/fa6'
-import { LuGoal } from 'react-icons/lu';
+import React, { useCallback, useContext, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-
- interface maintask {
-    name:string;
-    id:number;
- }
+import { GlobalContext } from '../context/context';
+import { GlobalContextTypes } from '../context/context';
+import { maintask } from '../context/context';
 
 export const MainPage:React.FC = () => {
-  const [samplearray,setsmaplearray] = useState<maintask[]>([])
+  const {state, addMainLogs, deleteMainLogs} = useContext(GlobalContext) as GlobalContextTypes
+
 
   const handleFormData = (event:React.FormEvent)=>{
     event.preventDefault()
     const form =new FormData(event.currentTarget as HTMLFormElement);
     const taskName = form.get('name') as string;
     console.log(taskName);
-    if(taskName){
+    if( taskName){
         mainTaskMaker(taskName)
     }else{
         console.log('error taskName not read');
@@ -30,17 +27,20 @@ export const MainPage:React.FC = () => {
 
   const mainTaskMaker = useCallback((taskName:string)=>{
     const mainTask:maintask = {
-        name:taskName,
+        taskName:taskName,
         id:Math.floor(Math.random() *12021),
+        logs:[]
     }
+    addMainLogs(mainTask)   
+  },[addMainLogs,state.mainlogs]) 
 
-    setsmaplearray((prev )=> (
-         [...prev, mainTask]
-    ))
-  },[]) 
+  const handleDelete = useCallback((id:number)=>{
+    deleteMainLogs(id)
+
+  },[deleteMainLogs,state.mainlogs])
 
   useEffect(()=>{
-    console.log(samplearray)
+    console.log(state.mainlogs)
   })
    
 
@@ -74,12 +74,13 @@ export const MainPage:React.FC = () => {
         <article className='flex-col justify-center items-center bg-gray-900 text-white mt-10'>
             <h1 className='text-center'>The logs will be displayed here</h1>
             <main className=' p-5 flex-col justify-center items-center'>
-                <article className='flex justify-between bg-gray-500 text-blue-600 p-3 text-xl mx-auto w-[50%]'>
-                    <span>task1</span>
-                    <Link to={'/123'} >open</Link>
-                    <span>delete</span>
-
-                </article>
+                {state.mainlogs?.map((log, index)=>(
+                     <article key={index} className='flex justify-between my-2 bg-gray-500 text-blue-600 p-3 text-xl mx-auto w-[50%]'>
+                     <span>{log.taskName}</span>
+                     <Link to={'/123'} >open</Link>
+                     <span onClick={()=>handleDelete(log.id)}>delete</span>
+                   </article>
+                ))}
             </main>
         </article>
     </section>

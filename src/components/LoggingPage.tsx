@@ -1,6 +1,18 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 
 export const LoggingPage:React.FC = () => {
+
+   const logMaker = useCallback(()=>{
+        const log = {
+            start:'',
+            end:'',
+            duration:'',
+            state:''
+        }
+
+   },[])
+
+
   return (
     <section>
         <h2 className='text-center'>Enter the detail and start the log</h2>
