@@ -59,11 +59,11 @@ export const MainPage:React.FC = () => {
         </div>
 
         <div className='mb-10 flex mt-5  justify-center items-center' >
-            <form action="" className='flex-col justify-center items-center' onSubmit={handleFormData} >
+            <form action="" className='flex-col justify-center items-center' autoComplete='on' onSubmit={handleFormData} >
                 <label htmlFor="name" className='text-white block'> 
                 enter name of the task
                 </label>
-                <input type="text" name='name' className='text-black' />
+                <input type="text" name='name' id='name' className='text-black' autoComplete='on'/>
                 <button type='submit' className='p-2 block border-2 border-white mx-auto mt-2'>
                     make task
                 </button>
@@ -77,7 +77,7 @@ export const MainPage:React.FC = () => {
                 {state.mainlogs?.map((log, index)=>(
                      <article key={index} className='flex justify-between my-2 bg-gray-500 text-blue-600 p-3 text-xl mx-auto w-[50%]'>
                      <span>{log.taskName}</span>
-                     <Link to={'/123'} >open</Link>
+                     <Link to={`/${log.id}`} >open</Link>
                      <span onClick={()=>handleDelete(log.id)}>delete</span>
                    </article>
                 ))}
