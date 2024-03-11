@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration';
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { GlobalContext, GlobalContextTypes, addlog, deleteLog, updatelog } from '../context/context';
 import { useParams } from 'react-router-dom';
 dayjs.extend(duration);

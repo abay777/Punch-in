@@ -1,4 +1,4 @@
-import  { createContext, useReducer, ReactNode, FC, useCallback, useEffect } from "react";
+import  { createContext, useReducer, ReactNode, FC, useEffect } from "react";
 import { AppReducer } from "./AppReducer";
 import { Log } from "../components/LoggingPage";
 
@@ -8,9 +8,7 @@ export interface maintask {
     id:number;
     logs:Log[]
 }
-interface firstSate {
-    mainlogs:[]
-}
+
 
 export interface InitialState {
        mainlogs:maintask [];
@@ -52,22 +50,16 @@ export const GlobalContext = createContext<GlobalContextTypes | null>(null);
 
 const GlobalProvider: FC<{ children: ReactNode }> = ({ children }): JSX.Element => {
     const [state, dispatch] = useReducer(AppReducer, initialState);
-  
+
     useEffect(() =>{
-        console.log('storage is working');
         localStorage.setItem('state',JSON.stringify(state))
-        console.log(localStorage);
     },[state])
      
-     
-
     const addMainLogs= (newlog:maintask ) => {
         dispatch({
             type: 'ADD_MAIN_LOG',
             payload: newlog
         });
-         console.log(state)
-
     };
 
     const deleteMainLogs = (id:number) =>{
