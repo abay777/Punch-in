@@ -1,12 +1,9 @@
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration';
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { GlobalContext, GlobalContextTypes, addlog, updatelog } from '../context/context';
+import { GlobalContext, GlobalContextTypes, addlog, deleteLog, updatelog } from '../context/context';
 import { useParams } from 'react-router-dom';
-
 dayjs.extend(duration);
-
-
 
 export interface Log {
         name:string;
@@ -22,15 +19,18 @@ export interface Log {
 
 export const LoggingPage:React.FC = () => {
 
-    const {addLogs,updateLogs,state} = useContext(GlobalContext) as GlobalContextTypes
+    const {addLogs,updateLogs,deleteLogs,state} = useContext(GlobalContext) as GlobalContextTypes
     let {id} = useParams();
     
     const handleInputChange = (event:React.FormEvent) =>{
         event.preventDefault()
        const form = new FormData(event.currentTarget as HTMLFormElement)
        const name = form.get('taskName') as string;
-        console.log(name)
-        logMaker(name)  
+        if(name){
+         logMaker(name)    
+        }else{
+            alert('please enter a name 😉')
+        }
     }
 
     const logMaker = useCallback((name:string)=>{
@@ -66,17 +66,20 @@ export const LoggingPage:React.FC = () => {
             mainId:Number(id),
             updatedLog:log
         }
-
         updateLogs(updateLog)
-         
     }, []);
 
-   
-
-   useEffect(()=>{
-    console.log(state.mainlogs)
-   },[state.mainlogs]);
-
+    const handleDelete = useCallback((logId:number,log:Log)=>{ 
+        if(log.state){
+            const deleteLog:deleteLog = {
+                mainLogId:Number(id),
+                logId
+            }
+            deleteLogs(deleteLog)
+        }else{
+            return null
+        }      
+    },[])
 
   return (
     <section>
@@ -93,17 +96,21 @@ export const LoggingPage:React.FC = () => {
 
 
         <main className='flex-col justify-center items-center bg-gray-600 py-3'>
-            {state.mainlogs.map(loggings=>
+            {state.mainlogs.map(loggings=>(
+               loggings.id === Number(id) ?(
                 loggings.logs.map((log:Log)=>
                     <article key={log.id} className='bg-gray-900 text-blue-600 flex justify-between items-center w-[50%] mx-auto p-3 '>
                     <h2>taskName:{log.name}</h2>
                     <h2>Start: {log.start}</h2>
                     <h2>end: {log.end}</h2>
                     <h2>Duration: {log.duration}</h2>
-                    <h3>delete</h3>
+                    <h3 onClick={()=>handleDelete(log.id,log)}>delete</h3>
                     <button onClick={()=>handleStop(log)}>Stop</button>
                 </article>)
-                
+                ):(
+                  null
+                )
+                )
                 )}
            
         </main>

@@ -10,63 +10,74 @@ export const AppReducer = (state: InitialState, action: Action) => {
         case 'ADD_MAIN_LOG':
             return {
                 ...state,
-                mainlogs: [...state.mainlogs, action?.payload]
+                mainlogs: [...state.mainlogs, action?.payload]     
             };
+
         case 'DELETE_MAIN_LOG':
             return {
                 mainlogs: state.mainlogs.filter(log => log.id !== action?.payload)
             };
+
         case 'ADD_LOGS':
             const { id, log } = action.payload;
             const updatedMainlogs = state.mainlogs.map(mainlog => {
-                if (mainlog.id === id) {
+                if (mainlog.id === id) {  
                     return {
                         ...mainlog,
                         logs: [...mainlog.logs, log]
                     };
                 }
-                return mainlog; // Return the unchanged mainlog for other items
+                return mainlog;
             });
-        
             if (updatedMainlogs.some(mainlog => mainlog.id === id)) {
-                // If mainlog with id is found, return the updated state
                 return {
                     ...state,
                     mainlogs: updatedMainlogs
                 };
             } else {
-                // If mainlog with id is not found, return the original state
                 return state;
             }
             
-            case 'UPDATE_LOGS':
-                const { mainId, updatedLog } = action.payload;
-                const updatedState = {
-                    ...state,
-                    mainlogs: state.mainlogs.map(mainlog => {
-                        if (mainlog.id === mainId) {
-                            return {
-                                ...mainlog,
-                                logs: mainlog.logs.map(logg => {
-                                    if (logg.id === updatedLog.id) {
-                                        return {
-                                            ...logg,
-                                            ...updatedLog,
-                                        };
-                                    }
-                                    return logg; // Return the unchanged log if not the one to update
-                                }),
-                            };
-                        }
-                        return mainlog; // Return the unchanged mainlog for other items
-                    }),
-                };
-                console.log('log successfully updated');
-                return updatedState;
-            
+        case 'UPDATE_LOGS':
+            const { mainId, updatedLog } = action.payload;
+            const updatedState = {
+                ...state,
+                mainlogs: state.mainlogs.map(mainlog => {
+                    if (mainlog.id === mainId) {
+                        return {
+                            ...mainlog,
+                            logs: mainlog.logs.map(logg => {
+                                if (logg.id === updatedLog.id) {
+                                    return {
+                                        ...logg,
+                                        ...updatedLog,
+                                    };
+                                }
+                                return logg; 
+                            }),
+                        };
+                    }
+                    return mainlog; 
+                }),
+            };
+            return updatedState;
 
+        case 'DELETE_LOGS':
+            const {mainLogId,logId} = action.payload ;
+            const newMainLog = state.mainlogs.map(mainlog=>{
+                    if(mainlog.id === mainLogId){
+                        return {
+                            ...mainlog,
+                            logs:mainlog.logs.filter(log=>log.id!==logId)}
+                }
+                return mainlog
+            })
+            return {
+                ...state,
+                mainlogs:newMainLog
+            }
 
-            default:
-                return state;
-        }
+        default:
+            return state;
+    }
 };

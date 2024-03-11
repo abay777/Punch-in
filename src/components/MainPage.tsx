@@ -12,18 +12,12 @@ export const MainPage:React.FC = () => {
     event.preventDefault()
     const form =new FormData(event.currentTarget as HTMLFormElement);
     const taskName = form.get('name') as string;
-    console.log(taskName);
     if( taskName){
         mainTaskMaker(taskName)
     }else{
-        console.log('error taskName not read');
-        
+        window.alert('please enter a task-name')  
     }
-    
-
   }
-
- 
 
   const mainTaskMaker = useCallback((taskName:string)=>{
     const mainTask:maintask = {
@@ -36,19 +30,10 @@ export const MainPage:React.FC = () => {
 
   const handleDelete = useCallback((id:number)=>{
     deleteMainLogs(id)
-
   },[deleteMainLogs,state.mainlogs])
-
-  useEffect(()=>{
-    console.log(state.mainlogs)
-  })
-   
-
-
 
   return (
     <section className='flex-col justify-center'>
-      
         <div className=''> 
             <h1 className='text-3xl font-bold mx-auto text-center '>
                 here you can create the list for your logs 
@@ -68,7 +53,6 @@ export const MainPage:React.FC = () => {
                     make task
                 </button>
             </form>
-
         </div>
 
         <article className='flex-col justify-center items-center bg-gray-900 text-white mt-10'>

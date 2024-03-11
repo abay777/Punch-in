@@ -1,6 +1,7 @@
-import  { createContext, useReducer, ReactNode, FC } from "react";
+import  { createContext, useReducer, ReactNode, FC, useCallback, useEffect } from "react";
 import { AppReducer } from "./AppReducer";
 import { Log } from "../components/LoggingPage";
+
 
 export interface maintask {
     taskName:string;
@@ -23,6 +24,10 @@ export interface updatelog{
     mainId:number;
     updatedLog:Log;
 }
+export interface deleteLog{
+    mainLogId:number;
+    logId:number
+}
  interface loggings{
     id:number;
     log:Log
@@ -35,22 +40,34 @@ export interface GlobalContextTypes {
         deleteMainLogs:(id:number) =>void;
         addLogs:(addLog:loggings) =>void;
         updateLogs:(updatelog:updatelog) => void;
+        deleteLogs:(deleteLog:deleteLog)=>void;
 }
 
-const initialState:InitialState = {
+const state:InitialState = {
     mainlogs:[]
 }
-
+const storedState = localStorage.getItem('state');
+const initialState: InitialState = storedState ? JSON.parse(storedState) : state
 export const GlobalContext = createContext<GlobalContextTypes | null>(null);
 
 const GlobalProvider: FC<{ children: ReactNode }> = ({ children }): JSX.Element => {
     const [state, dispatch] = useReducer(AppReducer, initialState);
+  
+    useEffect(() =>{
+        console.log('storage is working');
+        localStorage.setItem('state',JSON.stringify(state))
+        console.log(localStorage);
+    },[state])
+     
+     
 
     const addMainLogs= (newlog:maintask ) => {
         dispatch({
             type: 'ADD_MAIN_LOG',
             payload: newlog
         });
+         console.log(state)
+
     };
 
     const deleteMainLogs = (id:number) =>{
@@ -75,12 +92,21 @@ const GlobalProvider: FC<{ children: ReactNode }> = ({ children }): JSX.Element 
         })
     }
 
+    const deleteLogs = (deleteLog:deleteLog) => {
+        dispatch({
+            type:'DELETE_LOGS',
+            payload:deleteLog
+        })
+         
+    }
+
     const contextValue: GlobalContextTypes = {
         state,
         addMainLogs,
         deleteMainLogs,
         addLogs,
         updateLogs,
+        deleteLogs,
     };
 
     return (
