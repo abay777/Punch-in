@@ -3,6 +3,8 @@ import duration from 'dayjs/plugin/duration';
 import React, { useCallback, useContext } from 'react'
 import { GlobalContext, GlobalContextTypes, addlog, deleteLog, updatelog } from '../context/context';
 import { useParams } from 'react-router-dom';
+import { RiDeleteRow } from 'react-icons/ri';
+import { FaStopCircle } from 'react-icons/fa';
 dayjs.extend(duration);
 
 export interface Log {
@@ -77,43 +79,56 @@ export const LoggingPage:React.FC = () => {
             }
             deleteLogs(deleteLog)
         }else{
-            return null
+            return alert('click stop ✋ button first to delete')
         }      
     },[])
 
-  return (
-    <section>
-        <h2 className='text-center'>Enter the detail and start the log</h2>
-
-        <div className='flex justify-center items-center my-3'>
-                <form onSubmit={handleInputChange} autoComplete='on'>
-                    <label htmlFor="taskName"  >enter task name</label>
-                    <input type="text" id='taskName' autoComplete='on' name='taskName' className='p-2 text-black'  />
-                    <button type='submit' className='p-2 ml-2 bg-gray-600 text-xl'>Start log</button>
-                </form>
-                
-        </div>
-
-
-        <main className='flex-col justify-center items-center bg-gray-600 py-3'>
-            {state.mainlogs.map(loggings=>(
-               loggings.id === Number(id) ?(
-                loggings.logs.map((log:Log)=>
-                    <article key={log.id} className='bg-gray-900 text-blue-600 flex justify-between items-center w-[50%] mx-auto p-3 '>
-                    <h2>taskName:{log.name}</h2>
-                    <h2>Start: {log.start}</h2>
-                    <h2>end: {log.end}</h2>
-                    <h2>Duration: {log.duration}</h2>
-                    <h3 onClick={()=>handleDelete(log.id,log)}>delete</h3>
-                    <button onClick={()=>handleStop(log)}>Stop</button>
-                </article>)
-                ):(
-                  null
-                )
-                )
-                )}
-           
-        </main>
-    </section>
-  )
-}
+    return (
+        <section>
+          <div className='flex justify-center items-center my-3'>
+            <form onSubmit={handleInputChange} autoComplete='on' className='flex flex-col md:flex-row  justify-evenly gap-8 items-center'>
+              <label htmlFor='taskName' className='font-extrabold text-xl capitalize text-black'>enter task name</label>
+              <input type='text' id='taskName' autoComplete='on' name='taskName' className='p-2 rounded-xl text-black' />
+              <button type='submit' className='p-2 ml-2 bg-[#00000099] hover:bg-[#205f41] active:text-black text-xl rounded-xl font-bold'>
+                Start log
+              </button>
+            </form>
+          </div>
+    
+          <main className='flex-col justify-center items-center'>
+            
+                 
+                    <table className='table-auto w-full md:w-[80%] border-4 mx-auto'>
+                      <thead>
+                        <tr>
+                          <th className='p-2 md:text-lg text-sm text-[#09ffd2] bg-[#00000099] border-r-4 font-bold tracking-wide text-center'>Task Name</th>
+                          <th className='p-2 md:text-lg text-sm text-[#09ffd2] bg-[#00000099] border-r-4 font-bold tracking-wide text-center'>Start</th>
+                          <th className='p-2 md:text-lg text-sm text-[#09ffd2] bg-[#00000099] border-r-4 font-bold tracking-wide text-center'>End</th>
+                          <th className='p-2 md:text-lg text-sm text-[#09ffd2] bg-[#00000099] border-r-4 font-bold tracking-wide text-center'>Duration</th>
+                          <th className='p-2 md:text-lg text-sm text-[#09ffd2] bg-[#00000099] border-r-4 font-bold tracking-wide text-center'>stop</th>
+                          <th className='p-2 md:text-lg text-sm text-[#09ffd2] bg-[#00000099] border-r-4 font-bold tracking-wide text-center'>delete</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {state.mainlogs.map((loggings) =>
+                        loggings.id === Number(id) ? (
+                            loggings.logs.map((log: Log) => (
+                        <tr key={log.id} className={log.id %2===0?`bg-[#363434]`:`bg-[#000]`}>
+                          <td className='border-2 p-2  text-center text- font-semibold text-sm'>{log.name}</td>
+                          <td className='border-2 p-2 text-center text- font-semibold text-sm'>{log.start}</td>
+                          <td className='border-2 p-2 text-center text- font-semibold text-sm'>{log.end}</td>
+                          <td className='border-2 p-2 text-center text- font-semibold text-sm'>{log.duration}</td>
+                          <td className='border-2 p-2 text-center text- font-semibold text-sm'><button onClick={() => handleStop(log)}><FaStopCircle color='#964B00' size={25}/></button></td>
+                          <td className='border-2 p-2 text-center font-semibold text-sm'><button onClick={() => handleDelete(log.id, log)}><RiDeleteRow color='red' size={25} /></button></td>
+                        </tr>
+                           ))
+                           ) : null
+                         )}
+                      </tbody>
+                    </table>
+                 
+             
+          </main>
+        </section>
+      );
+    };
